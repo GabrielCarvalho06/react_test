@@ -3,6 +3,7 @@ import React from 'react';
 import {Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import logo from './assets/logo.png';
 import * as ImagePicker from 'expo-image-picker';
+import * as Sharing from 'expo-sharing';
 
 export default function App() {
 
@@ -24,14 +25,27 @@ export default function App() {
     }
 
     setSelectImage({localUri: pickerResult.uri})
-  };
+  }
+
+  let openShareDialogAsync = async () => {
+    if (!(await Sharing.isAvailableAsync())) {
+      alert(`Não é possível compratilhar imagem`);
+      return;
+    }
+
+    await Sharing.shareAsync(selectedImage.localUri);
+  }; 
+
 
   if(selectedImage !== null) {
     return (
       <View style={styles.container}>
 
         <Image source = {{ uri: selectedImage.localUri}}
-            style = {styles.thumbnail}/>
+            style = {styles.thumbnail}/>  
+        <TouchableOpacity onPress={openShareDialogAsync} style={styles.button}>
+          <Text style={styles.buttonText}>Share this photo</Text>
+        </TouchableOpacity>
 
         <Image source = {logo}
             style = {styles.logo}/>
